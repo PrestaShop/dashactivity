@@ -126,7 +126,7 @@
 				</span>
 			</li>
 			<li>
-				<span class="data_label">{l s='Total Subscribers' mod='dashactivity'}</span>
+				<span class="data_label"><a href="{$link->getAdminLink('AdminModules')}&amp;configure=blocknewsletter&amp;module_name=blocknewsletter">{l s='Total Subscribers' mod='dashactivity'}</a></span>
 				<span class="data_value size_md">
 					<span id="total_suscribers"></span>
 				</span>
