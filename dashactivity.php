@@ -34,7 +34,7 @@ class Dashactivity extends Module
 	public function __construct()
 	{
 		$this->name = 'dashactivity';
-		$this->displayName = 'Dashboard Activity';
+		$this->displayName = $this->l('Dashboard Activity');
 		$this->tab = 'dashboard';
 		$this->version = '0.2';
 		$this->author = 'PrestaShop';
