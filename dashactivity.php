@@ -34,7 +34,6 @@ class Dashactivity extends Module
 	public function __construct()
 	{
 		$this->name = 'dashactivity';
-		$this->displayName = $this->l('Dashboard Activity');
 		$this->tab = 'dashboard';
 		$this->version = '0.3';
 		$this->author = 'PrestaShop';
@@ -43,6 +42,7 @@ class Dashactivity extends Module
 		$this->push_time_limit = 180;
 
 		parent::__construct();
+		$this->displayName = $this->l('Dashboard Activity');
 		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 	}
 
