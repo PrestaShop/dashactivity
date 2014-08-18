@@ -34,15 +34,15 @@ class Dashactivity extends Module
 	public function __construct()
 	{
 		$this->name = 'dashactivity';
-		$this->displayName = 'Dashboard Activity';
 		$this->tab = 'dashboard';
-		$this->version = '0.2';
+		$this->version = '0.4.0';
 		$this->author = 'PrestaShop';
 		$this->push_filename = _PS_CACHE_DIR_.'push/activity';
 		$this->allow_push = true;
 		$this->push_time_limit = 180;
 
 		parent::__construct();
+		$this->displayName = $this->l('Dashboard Activity');
 		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 	}
 
@@ -184,21 +184,34 @@ class Dashactivity extends Module
 		if ($maintenance_ips = Configuration::get('PS_MAINTENANCE_IP'))
 			$maintenance_ips = implode(',', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips))));
 		if (Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS'))
-			$sql = 'SELECT COUNT(DISTINCT c.id_connections)
+		{
+			$sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, pt.name as page
 					FROM `'._DB_PREFIX_.'connections` c
 					LEFT JOIN `'._DB_PREFIX_.'connections_page` cp ON c.id_connections = cp.id_connections
-					WHERE TIME_TO_SEC(TIMEDIFF(NOW(), cp.`time_start`)) < '.((int)Configuration::get('DASHACTIVITY_VISITOR_ONLINE') * 60).'
-					AND cp.`time_end` IS NULL
-					'.Shop::addSqlRestriction(false, 'c').'
-					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '');
+					LEFT JOIN `'._DB_PREFIX_.'page` p ON p.id_page = cp.id_page
+					LEFT JOIN `'._DB_PREFIX_.'page_type` pt ON p.id_page_type = pt.id_page_type
+					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
+					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
+						'.Shop::addSqlRestriction(false, 'c').'
+						AND cp.`time_end` IS NULL
+					AND TIME_TO_SEC(TIMEDIFF("'.pSQL(date('Y-m-d H:i:s')).'", cp.`time_start`)) < 900
+					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
+					GROUP BY c.id_connections
+					ORDER BY c.date_add DESC';
+		}
 		else
-			$sql = 'SELECT COUNT(*)
-					FROM `'._DB_PREFIX_.'connections`
-					WHERE TIME_TO_SEC(TIMEDIFF(NOW(), `date_add`)) < '.((int)Configuration::get('DASHACTIVITY_VISITOR_ONLINE') * 60).'
-					'.Shop::addSqlRestriction(false).'
-					'.($maintenance_ips ? 'AND ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '');
-		$online_visitor = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
-
+		{
+			$sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, "-" as page
+					FROM `'._DB_PREFIX_.'connections` c
+					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
+					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
+						'.Shop::addSqlRestriction(false, 'c').'
+						AND TIME_TO_SEC(TIMEDIFF("'.pSQL(date('Y-m-d H:i:s')).'", c.`date_add`)) < 900
+					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
+					ORDER BY c.date_add DESC';
+		}
+		$results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+		$online_visitor = Db::getInstance()->NumRows();
 		$pending_orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
 			'
 					SELECT COUNT(*)
