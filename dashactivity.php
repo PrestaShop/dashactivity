@@ -35,7 +35,7 @@ class Dashactivity extends Module
 	{
 		$this->name = 'dashactivity';
 		$this->tab = 'dashboard';
-		$this->version = '0.4.0';
+		$this->version = '0.4.1';
 		$this->author = 'PrestaShop';
 		$this->push_filename = _PS_CACHE_DIR_.'push/activity';
 		$this->allow_push = true;
@@ -182,7 +182,7 @@ class Dashactivity extends Module
 		// if ($result = $gapi->requestReportData('', 'ga:activeVisitors', null, null, null, null, 1, 1))
 		// $online_visitor = $result[0]['metrics']['activeVisitors'];
 		if ($maintenance_ips = Configuration::get('PS_MAINTENANCE_IP'))
-			$maintenance_ips = implode(',', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips))));
+			$maintenance_ips = implode(',', array_map('intval', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips)))));
 		if (Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS'))
 		{
 			$sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, pt.name as page
