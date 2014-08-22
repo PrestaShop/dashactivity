@@ -182,7 +182,7 @@ class Dashactivity extends Module
 		// if ($result = $gapi->requestReportData('', 'ga:activeVisitors', null, null, null, null, 1, 1))
 		// $online_visitor = $result[0]['metrics']['activeVisitors'];
 		if ($maintenance_ips = Configuration::get('PS_MAINTENANCE_IP'))
-			$maintenance_ips = implode(',', array_map('intval', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips)))));
+			$maintenance_ips = implode(',', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips))));
 		if (Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS'))
 		{
 			$sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, pt.name as page
@@ -194,7 +194,7 @@ class Dashactivity extends Module
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						'.Shop::addSqlRestriction(false, 'c').'
 						AND cp.`time_end` IS NULL
-					AND TIME_TO_SEC(TIMEDIFF("'.pSQL(date('Y-m-d H:i:s')).'", cp.`time_start`)) < 900
+					AND TIME_TO_SEC(TIMEDIFF(\''.pSQL(date('Y-m-d H:i:00', time())).'\', cp.`time_start`)) < 900
 					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
 					GROUP BY c.id_connections
 					ORDER BY c.date_add DESC';
@@ -206,7 +206,7 @@ class Dashactivity extends Module
 					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						'.Shop::addSqlRestriction(false, 'c').'
-						AND TIME_TO_SEC(TIMEDIFF("'.pSQL(date('Y-m-d H:i:s')).'", c.`date_add`)) < 900
+						AND TIME_TO_SEC(TIMEDIFF(\''.pSQL(date('Y-m-d H:i:00', time())).'\', c.`date_add`)) < 900
 					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
 					ORDER BY c.date_add DESC';
 		}
