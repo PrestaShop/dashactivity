@@ -26,10 +26,10 @@
 	<div class="panel-heading">
 		<i class="icon-time"></i> {l s='Activity overview' mod='dashactivity'}
 		<span class="panel-heading-action">
-			<a class="list-toolbar-btn" href="#" onclick="toggleDashConfig('dashactivity'); return false;" title="configure">
+			<a class="list-toolbar-btn" href="#" onclick="toggleDashConfig('dashactivity'); return false;" title="{l s='Configure' mod='dashactivity'}">
 				<i class="process-icon-configure"></i>
 			</a>
-			<a class="list-toolbar-btn" href="#" onclick="refreshDashboard('dashactivity'); return false;" title="refresh">
+			<a class="list-toolbar-btn" href="#" onclick="refreshDashboard('dashactivity'); return false;" title="{l s='Refresh' mod='dashactivity'}">
 				<i class="process-icon-refresh"></i>
 			</a>
 		</span>
