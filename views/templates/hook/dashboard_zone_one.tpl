@@ -62,7 +62,7 @@
 					<span id="active_shopping_cart"></span>
 				</span>
 			</li>
-		</ul>			
+		</ul>
 	</section>
 	<section id="dash_pending" class="loading">
 		<header><i class="icon-time"></i> {l s='Currently Pending' mod='dashactivity'}</header>
@@ -85,13 +85,13 @@
 					<span id="abandoned_cart"></span>
 				</span>
 			</li>
-			{if $PS_STOCK_MANAGEMENT}
-			<li>
-				<span class="data_label"><a href="{$link->getAdminLink('AdminTracking')|escape:'html':'UTF-8'}">{l s='Out of Stock Products' mod='dashactivity'}</a></span>
-				<span class="data_value size_l">
-					<span id="products_out_of_stock"></span>
-				</span>
-			</li>
+			{if isset($PS_STOCK_MANAGEMENT) && $PS_STOCK_MANAGEMENT}
+				<li>
+					<span class="data_label"><a href="{$link->getAdminLink('AdminTracking')|escape:'html':'UTF-8'}">{l s='Out of Stock Products' mod='dashactivity'}</a></span>
+					<span class="data_value size_l">
+						<span id="products_out_of_stock"></span>
+					</span>
+				</li>
 			{/if}
 		</ul>
 	</section>
@@ -133,7 +133,7 @@
 					<span id="total_suscribers"></span>
 				</span>
 			</li>
-		</ul>		
+		</ul>
 	</section>
 	<section id="dash_traffic" class="loading">
 		<header>
@@ -167,7 +167,7 @@
 					<svg></svg>
 				</div>
 			</li>
-		</ul>		
+		</ul>
 	</section>
 </section>
 <script type="text/javascript">
