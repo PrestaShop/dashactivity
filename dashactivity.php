@@ -98,6 +98,7 @@ class Dashactivity extends Module
 				'date_subtitle' => $this->l('(from %s to %s)'),
 				'date_format' => $this->context->language->date_format_lite,
 				'link' => $this->context->link,
+				'PS_STOCK_MANAGEMENT' => Configuration::get('PS_STOCK_MANAGEMENT'),
 			)
 		);
 
