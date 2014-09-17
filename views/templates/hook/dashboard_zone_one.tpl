@@ -85,7 +85,7 @@
 					<span id="abandoned_cart"></span>
 				</span>
 			</li>
-			{if isset($PS_STOCK_MANAGEMENT) && $PS_STOCK_MANAGEMENT}
+			{if isset($stock_management) && $stock_management}
 				<li>
 					<span class="data_label"><a href="{$link->getAdminLink('AdminTracking')|escape:'html':'UTF-8'}">{l s='Out of Stock Products' mod='dashactivity'}</a></span>
 					<span class="data_value size_l">
