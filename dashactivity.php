@@ -35,7 +35,7 @@ class Dashactivity extends Module
 	{
 		$this->name = 'dashactivity';
 		$this->tab = 'dashboard';
-		$this->version = '0.4.5';
+		$this->version = '0.4.6';
 		$this->author = 'PrestaShop';
 		$this->push_filename = _PS_CACHE_DIR_.'push/activity';
 		$this->allow_push = true;
