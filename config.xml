@@ -3,7 +3,7 @@
 	<name>dashactivity</name>
 	<displayName><![CDATA[Dashboard Activity]]></displayName>
 	<version><![CDATA[0.4.6]]></version>
-	<description><![CDATA[]]></description>
+	<description><![CDATA[Adds a block with an overview of the current activity on your store.]]></description>
 	<author><![CDATA[PrestaShop]]></author>
 	<tab><![CDATA[dashboard]]></tab>
 	<is_configurable>0</is_configurable>

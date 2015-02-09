@@ -1,8 +1,8 @@
-# 
+# Dashboard Activity
 
 ## About
 
-
+Adds a block with an overview of the current activity on your store.
 
 ## Contributing
 
