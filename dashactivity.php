@@ -1,28 +1,28 @@
 <?php
-/*
-* 2007-2014 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+/**
+ * 2007-2015 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2015 PrestaShop SA
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 if (!defined('_PS_VERSION_'))
 	exit;
@@ -160,7 +160,7 @@ class Dashactivity extends Module
 		if (Validate::isLoadedObject($gapi) && $gapi->isConfigured())
 		{
 			$visits = $unique_visitors = $online_visitor = 0;
-			if ($result = $gapi->requestReportData('', 'ga:visits,ga:visitors', substr($params['date_from'], 0, 10), substr($params['date_to'], 0, 10), null, null, 1, 1))
+			if ($result = $gapi->requestReportData('', 'ga:visits,ga:visitors', Tools::substr($params['date_from'], 0, 10), Tools::substr($params['date_to'], 0, 10), null, null, 1, 1))
 			{
 				$visits = $result[0]['metrics']['visits'];
 				$unique_visitors = $result[0]['metrics']['visitors'];
@@ -176,41 +176,6 @@ class Dashactivity extends Module
 					);
 			extract($row);
 		}
-
-		// Online visitors is only available with Analytics Real Time still in private beta at this time (October 18th, 2013).
-		// if ($result = $gapi->requestReportData('', 'ga:activeVisitors', null, null, null, null, 1, 1))
-		// $online_visitor = $result[0]['metrics']['activeVisitors'];
-		if ($maintenance_ips = Configuration::get('PS_MAINTENANCE_IP'))
-			$maintenance_ips = implode(',', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips))));
-		if (Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS'))
-		{
-			$sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, pt.name as page
-					FROM `'._DB_PREFIX_.'connections` c
-					LEFT JOIN `'._DB_PREFIX_.'connections_page` cp ON c.id_connections = cp.id_connections
-					LEFT JOIN `'._DB_PREFIX_.'page` p ON p.id_page = cp.id_page
-					LEFT JOIN `'._DB_PREFIX_.'page_type` pt ON p.id_page_type = pt.id_page_type
-					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
-					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
-						'.Shop::addSqlRestriction(false, 'c').'
-						AND cp.`time_end` IS NULL
-					AND TIME_TO_SEC(TIMEDIFF(\''.pSQL(date('Y-m-d H:i:00', time())).'\', cp.`time_start`)) < 900
-					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
-					GROUP BY c.id_connections
-					ORDER BY c.date_add DESC';
-		}
-		else
-		{
-			$sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, "-" as page
-					FROM `'._DB_PREFIX_.'connections` c
-					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
-					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
-						'.Shop::addSqlRestriction(false, 'c').'
-						AND TIME_TO_SEC(TIMEDIFF(\''.pSQL(date('Y-m-d H:i:00', time())).'\', c.`date_add`)) < 900
-					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
-					ORDER BY c.date_add DESC';
-		}
-
-		$results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
 
 		$online_visitor = Db::getInstance()->NumRows();
 		$pending_orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
@@ -242,7 +207,8 @@ class Dashactivity extends Module
 			FROM `'._DB_PREFIX_.'product` p
 			'.Shop::addSqlAssociation('product', 'p').'
 			LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON p.id_product = pa.id_product
-			'.Product::sqlStock('p', 'pa')
+			'.Product::sqlStock('p', 'pa').'
+			WHERE p.active = 1'
 		);
 
 		$new_messages = AdminStatsController::getPendingMessages();
@@ -362,7 +328,16 @@ class Dashactivity extends Module
 		if (Validate::isLoadedObject($gapi) && $gapi->isConfigured())
 		{
 			$websites = array();
-			if ($result = $gapi->requestReportData('ga:source', 'ga:visitors', substr($date_from, 0, 10), substr($date_to, 0, 10), '-ga:visitors', null, 1, $limit))
+			if ($result = $gapi->requestReportData(
+				'ga:source',
+				'ga:visitors',
+				Tools::substr($date_from, 0, 10),
+				Tools::substr($date_to, 0, 10),
+				'-ga:visitors',
+				null,
+				1,
+				$limit
+			))
 				foreach ($result as $row)
 					$websites[$row['dimensions']['source']] = $row['metrics']['visitors'];
 		}

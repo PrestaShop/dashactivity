@@ -17,10 +17,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2015 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 *}
 <section id="dashactivity" class="panel widget{if $allow_push} allow_push{/if}">
 	<div class="panel-heading">
@@ -171,6 +171,6 @@
 	</section>
 </section>
 <script type="text/javascript">
-	date_subtitle = "{$date_subtitle}";
-	date_format   = "{$date_format}";
+	date_subtitle = "{$date_subtitle|escape:'html':'UTF-8'}";
+	date_format   = "{$date_format|escape:'html':'UTF-8'}";
 </script>
