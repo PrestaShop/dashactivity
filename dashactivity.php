@@ -193,7 +193,7 @@ class Dashactivity extends Module
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						'.Shop::addSqlRestriction(false, 'c').'
 						AND cp.`time_end` IS NULL
-					AND TIME_TO_SEC(TIMEDIFF(\''.pSQL(date('Y-m-d H:i:00', time())).'\', cp.`time_start`)) < 900
+						AND cp.`time_start` > now() - interval 900 second
 					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
 					GROUP BY c.id_connections
 					ORDER BY c.date_add DESC';
@@ -205,7 +205,7 @@ class Dashactivity extends Module
 					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						'.Shop::addSqlRestriction(false, 'c').'
-						AND TIME_TO_SEC(TIMEDIFF(\''.pSQL(date('Y-m-d H:i:00', time())).'\', c.`date_add`)) < 900
+						AND c.`date_add` > now() - interval 900 second
 					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
 					ORDER BY c.date_add DESC';
 		}
