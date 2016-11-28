@@ -44,7 +44,7 @@
 				<span class="data_label size_l">
 					<a href="{$link->getAdminLink('AdminStats')|escape:'html':'UTF-8'}&amp;module=statslive">{l s='Online Visitors' mod='dashactivity'}</a>
 					<small class="text-muted"><br/>
-						{l s='in the last %d minutes' sprintf=$DASHACTIVITY_VISITOR_ONLINE|intval mod='dashactivity'}
+						{l s='in the last %d minutes' sprintf=[$DASHACTIVITY_VISITOR_ONLINE|intval] mod='dashactivity'}
 					</small>
 				</span>
 				<span class="data_value size_xxl">
@@ -55,7 +55,7 @@
 				<span class="data_label size_l">
 					<a href="{$link->getAdminLink('AdminCarts')|escape:'html':'UTF-8'}">{l s='Active Shopping Carts' mod='dashactivity'}</a>
 					<small class="text-muted"><br/>
-						{l s='in the last %d minutes' sprintf=$DASHACTIVITY_CART_ACTIVE|intval mod='dashactivity'}
+						{l s='in the last %d minutes' sprintf=[$DASHACTIVITY_CART_ACTIVE|intval] mod='dashactivity'}
 					</small>
 				</span>
 				<span class="data_value size_xxl">
