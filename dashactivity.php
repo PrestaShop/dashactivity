@@ -36,15 +36,15 @@ class dashactivity extends Module
     {
         $this->name = 'dashactivity';
         $this->tab = 'dashboard';
-        $this->version = '0.6.0';
+        $this->version = '1.0.0';
         $this->author = 'PrestaShop';
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
         $this->allow_push = true;
         $this->push_time_limit = 180;
 
         parent::__construct();
-        $this->displayName = $this->l('Dashboard Activity');
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+        $this->displayName = $this->trans('Dashboard Activity', array(), 'Modules.Dashactivity.Admin');
+        $this->ps_versions_compliancy = array('min' => '1.7.0.0', 'max' => _PS_VERSION_);
     }
 
     public function install()
@@ -97,7 +97,7 @@ class dashactivity extends Module
             array(
                 'gapi_mode' => $gapi_mode,
                 'dashactivity_config_form' => $this->renderConfigForm(),
-                'date_subtitle' => $this->l('(from %s to %s)'),
+                'date_subtitle' => $this->trans('(from %s to %s)', array(), 'Modules.Dashactivity.Admin'),
                 'date_format' => $this->context->language->date_format_lite,
                 'link' => $this->context->link
             )
@@ -373,7 +373,7 @@ class dashactivity extends Module
                 }
             }
         } else {
-            $direct_link = $this->l('Direct link');
+            $direct_link = $this->trans('Direct link', array(), 'Admin.OrdersCustomers.Notification');
             $websites = array($direct_link => 0);
 
             $result = Db::getInstance()->ExecuteS('
@@ -408,10 +408,10 @@ class dashactivity extends Module
                 'id_form' => 'step_carrier_general',
                 'input' => array(),
                 'submit' => array(
-                    'title' => $this->l('Save'),
+                    'title' => $this->trans('Save', array(), 'Admin.Actions'),
                     'class' => 'btn btn-default pull-right submit_dash_config',
                     'reset' => array(
-                        'title' => $this->l('Cancel'),
+                        'title' => $this->trans('Cancel', array(), 'Admin.Actions'),
                         'class' => 'btn btn-default cancel_dash_config',
                     )
                 )
@@ -419,8 +419,8 @@ class dashactivity extends Module
         );
 
         $fields_form['form']['input'][] = array(
-            'label' => $this->l('Active cart'),
-            'hint' => $this->l('How long (in minutes) a cart is to be considered as active after the last recorded change (default: 30 min).'),
+            'label' => $this->trans('Active cart', array(), 'Modules.Dashactivity.Admin'),
+            'hint' => $this->trans('How long (in minutes) a cart is to be considered as active after the last recorded change (default: 30 min).', array(), 'Modules.Dashactivity.Admin'),
             'name' => 'DASHACTIVITY_CART_ACTIVE',
             'type' => 'select',
             'options' => array(
@@ -437,8 +437,8 @@ class dashactivity extends Module
             ),
         );
         $fields_form['form']['input'][] = array(
-            'label' => $this->l('Online visitor'),
-            'hint' => $this->l('How long (in minutes) a visitor is to be considered as online after their last action (default: 30 min).'),
+            'label' => $this->trans('Online visitor', array(), 'Modules.Dashactivity.Admin'),
+            'hint' => $this->trans('How long (in minutes) a visitor is to be considered as online after their last action (default: 30 min).', array(), 'Modules.Dashactivity.Admin'),
             'name' => 'DASHACTIVITY_VISITOR_ONLINE',
             'type' => 'select',
             'options' => array(
@@ -455,18 +455,18 @@ class dashactivity extends Module
             ),
         );
         $fields_form['form']['input'][] = array(
-            'label' => $this->l('Abandoned cart (min)'),
-            'hint' => $this->l('How long (in hours) after the last action a cart is to be considered as abandoned (default: 24 hrs).'),
+            'label' => $this->trans('Abandoned cart (min)', array(), 'Modules.Dashactivity.Admin'),
+            'hint' => $this->trans('How long (in hours) after the last action a cart is to be considered as abandoned (default: 24 hrs).', array(), 'Modules.Dashactivity.Admin'),
             'name' => 'DASHACTIVITY_CART_ABANDONED_MIN',
             'type' => 'text',
-            'suffix' => $this->l('hrs'),
+            'suffix' => $this->trans('hrs', array(), 'Modules.Dashactivity.Admin'),
         );
         $fields_form['form']['input'][] = array(
-            'label' => $this->l('Abandoned cart (max)'),
-            'hint' => $this->l('How long (in hours) after the last action a cart is no longer to be considered as abandoned (default: 24 hrs).'),
+            'label' => $this->trans('Abandoned cart (max)', array(), 'Modules.Dashactivity.Admin'),
+            'hint' => $this->trans('How long (in hours) after the last action a cart is no longer to be considered as abandoned (default: 24 hrs).', array(), 'Modules.Dashactivity.Admin'),
             'name' => 'DASHACTIVITY_CART_ABANDONED_MAX',
             'type' => 'text',
-            'suffix' => $this->l('hrs'),
+            'suffix' => $this->trans('hrs', array(), 'Modules.Dashactivity.Admin'),
         );
 
         $helper = new HelperForm();
