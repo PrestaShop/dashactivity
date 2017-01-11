@@ -43,7 +43,7 @@ class Dashactivity extends Module
 
 		parent::__construct();
 		$this->displayName = $this->l('Dashboard Activity');
-		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.7.0.99');
 	}
 
 	public function install()
