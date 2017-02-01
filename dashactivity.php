@@ -373,7 +373,7 @@ class dashactivity extends Module
                 }
             }
         } else {
-            $direct_link = $this->trans('Direct link', array(), 'Admin.OrdersCustomers.Notification');
+            $direct_link = $this->trans('Direct link', array(), 'Admin.Orderscustomers.Notification');
             $websites = array($direct_link => 0);
 
             $result = Db::getInstance()->ExecuteS('
