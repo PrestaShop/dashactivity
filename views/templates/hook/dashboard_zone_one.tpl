@@ -145,7 +145,7 @@
 			{if $gapi_mode}
 				<li>
 					<span class="data_label">
-						<img src="../modules/dashactivity/gapi-logo.gif" width="16" height="16" alt=""/> <a href="{$link->getAdminLink('AdminModules')|escape:'html':'UTF-8'}&amp;{$gapi_mode}=gapi">{l s='Link to your Google Analytics account' d='Modules.Dashactivity.Admin'}</a>
+						<img src="../modules/dashactivity/views/img/gapi-logo.gif" width="16" height="16" alt=""/> <a href="{$link->getAdminLink('AdminModules')|escape:'html':'UTF-8'}&amp;{$gapi_mode}=gapi">{l s='Link to your Google Analytics account' d='Modules.Dashactivity.Admin'}</a>
 					</span>
 				</li>
 			{/if}
