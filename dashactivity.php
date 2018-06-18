@@ -38,6 +38,8 @@ class dashactivity extends Module
         $this->tab = 'dashboard';
         $this->version = '2.0.2';
         $this->author = 'PrestaShop';
+        $this->description = 'Adds a block on PrestaShop\'s Dashboard, with an overview of the current activity on your store.';
+
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
         $this->allow_push = true;
         $this->push_time_limit = 180;
