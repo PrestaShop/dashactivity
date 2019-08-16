@@ -192,7 +192,7 @@ class dashactivity extends Module
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						'.Shop::addSqlRestriction(false, 'c').'
 						AND cp.`time_end` IS NULL
-					AND (\''.pSQL(date('Y-m-d H:i:00', time() - 900)).'\' < cp.`time_start`)
+					AND (\''.pSQL(date('Y-m-d H:i:00', time() - 60*(int)Configuration::get('DASHACTIVITY_VISITOR_ONLINE'))).'\' < cp.`time_start`)
 					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
 					GROUP BY c.id_connections
 					ORDER BY c.date_add DESC';
@@ -202,7 +202,7 @@ class dashactivity extends Module
 					INNER JOIN `'._DB_PREFIX_.'guest` g ON c.id_guest = g.id_guest
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						'.Shop::addSqlRestriction(false, 'c').'
-						AND (\''.pSQL(date('Y-m-d H:i:00', time() - 900)).'\' < c.`date_add`)
+						AND (\''.pSQL(date('Y-m-d H:i:00', time() - 60*(int)Configuration::get('DASHACTIVITY_VISITOR_ONLINE'))).'\' < c.`date_add`)
 					'.($maintenance_ips ? 'AND c.ip_address NOT IN ('.preg_replace('/[^,0-9]/', '', $maintenance_ips).')' : '').'
 					ORDER BY c.date_add DESC';
         }
