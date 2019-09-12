@@ -69,10 +69,6 @@ class dashactivity extends Module
     public function hookActionAdminControllerSetMedia()
     {
         if (get_class($this->context->controller) == 'AdminDashboardController') {
-            if (method_exists($this->context->controller, 'addJquery')) {
-                $this->context->controller->addJquery();
-            }
-
             $this->context->controller->addJs($this->_path.'views/js/'.$this->name.'.js');
             $this->context->controller->addJs(
                 array(
