@@ -36,7 +36,7 @@ class dashactivity extends Module
     {
         $this->name = 'dashactivity';
         $this->tab = 'dashboard';
-        $this->version = '2.0.2';
+        $this->version = '2.1.0';
         $this->author = 'PrestaShop';
         $this->push_filename = _PS_CACHE_DIR_.'push/activity';
         $this->allow_push = true;
@@ -45,7 +45,7 @@ class dashactivity extends Module
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Activity', array(), 'Modules.Dashactivity.Admin');
         $this->description = $this->trans('Check in one glance what is happening on your store with a list of KPI on your dashboard.', [], 'Modules.Dashactivity.Admin');
-        $this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.7.7.0', 'max' => _PS_VERSION_);
     }
 
     public function install()
