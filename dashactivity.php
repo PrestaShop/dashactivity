@@ -38,9 +38,6 @@ class dashactivity extends Module
         $this->tab = 'dashboard';
         $this->version = '2.0.2';
         $this->author = 'PrestaShop';
-        $this->push_filename = _PS_CACHE_DIR_.'push/activity';
-        $this->allow_push = true;
-        $this->push_time_limit = 180;
 
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Activity', array(), 'Modules.Dashactivity.Admin');
@@ -57,11 +54,6 @@ class dashactivity extends Module
         return (parent::install()
             && $this->registerHook('dashboardZoneOne')
             && $this->registerHook('dashboardData')
-            && $this->registerHook('actionObjectOrderAddAfter')
-            && $this->registerHook('actionObjectCustomerAddAfter')
-            && $this->registerHook('actionObjectCustomerMessageAddAfter')
-            && $this->registerHook('actionObjectCustomerThreadAddAfter')
-            && $this->registerHook('actionObjectOrderReturnAddAfter')
             && $this->registerHook('actionAdminControllerSetMedia')
         );
     }
@@ -492,30 +484,5 @@ class dashactivity extends Module
             'DASHACTIVITY_CART_ABANDONED_MAX' => Tools::getValue('DASHACTIVITY_CART_ABANDONED_MAX', Configuration::get('DASHACTIVITY_CART_ABANDONED_MAX')),
             'DASHACTIVITY_VISITOR_ONLINE' => Tools::getValue('DASHACTIVITY_VISITOR_ONLINE', Configuration::get('DASHACTIVITY_VISITOR_ONLINE')),
         );
-    }
-
-    public function hookActionObjectCustomerMessageAddAfter($params)
-    {
-        return $this->hookActionObjectOrderAddAfter($params);
-    }
-
-    public function hookActionObjectCustomerThreadAddAfter($params)
-    {
-        return $this->hookActionObjectOrderAddAfter($params);
-    }
-
-    public function hookActionObjectCustomerAddAfter($params)
-    {
-        return $this->hookActionObjectOrderAddAfter($params);
-    }
-
-    public function hookActionObjectOrderReturnAddAfter($params)
-    {
-        return $this->hookActionObjectOrderAddAfter($params);
-    }
-
-    public function hookActionObjectOrderAddAfter($params)
-    {
-        Tools::changeFileMTime($this->push_filename);
     }
 }

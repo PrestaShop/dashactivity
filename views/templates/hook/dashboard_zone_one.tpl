@@ -22,7 +22,7 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 *}
-<section id="dashactivity" class="panel widget{if $allow_push} allow_push{/if}">
+<section id="dashactivity" class="panel widget">
 	<div class="panel-heading">
 		<i class="icon-time"></i> {l s='Activity overview' d='Modules.Dashactivity.Admin'}
 		<span class="panel-heading-action">
