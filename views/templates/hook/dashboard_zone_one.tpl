@@ -22,7 +22,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-<section id="dashactivity" class="panel widget{if $allow_push} allow_push{/if}">
+<section id="dashactivity" class="panel widget">
 	<div class="panel-heading">
 		<i class="icon-time"></i> {l s='Activity overview' d='Modules.Dashactivity.Admin'}
 		<span class="panel-heading-action">
