@@ -139,6 +139,7 @@ class dashactivity extends Module
             ];
         }
 
+        $visits = $unique_visitors = 0;
         $row = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getRow('
             SELECT COUNT(*) as visits, COUNT(DISTINCT `id_guest`) as unique_visitors
             FROM `' . _DB_PREFIX_ . 'connections`
@@ -147,8 +148,6 @@ class dashactivity extends Module
         );
         extract($row);
 
-        // Online visitors is only available with Analytics Real Time still in private beta at this time (October 18th, 2013).
-        // $online_visitor = $result[0]['metrics']['activeVisitors'];
         if ($maintenance_ips = Configuration::get('PS_MAINTENANCE_IP')) {
             $maintenance_ips = implode(',', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips))));
         }
@@ -241,22 +240,6 @@ class dashactivity extends Module
 			WHERE newsletter = 1
 			' . Shop::addSqlRestriction(Shop::SHARE_ORDER)
         );
-        if (Module::isInstalled('blocknewsletter')) {
-            $new_registrations += Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue('
-				SELECT COUNT(*)
-				FROM `' . _DB_PREFIX_ . 'newsletter`
-				WHERE active = 1
-				AND `newsletter_date_add` BETWEEN "' . pSQL($params['date_from']) . '" AND "' . pSQL($params['date_to']) . '"
-				' . Shop::addSqlRestriction(Shop::SHARE_ORDER)
-            );
-            $total_suscribers += Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue(
-                '
-							SELECT COUNT(*)
-							FROM `' . _DB_PREFIX_ . 'newsletter`
-			WHERE active = 1
-			' . Shop::addSqlRestriction(Shop::SHARE_ORDER)
-            );
-        }
 
         $product_reviews = 0;
         if (Module::isInstalled('productcomments')) {
@@ -426,7 +409,6 @@ class dashactivity extends Module
         $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-        $this->fields_form = [];
         $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitDashConfig';
