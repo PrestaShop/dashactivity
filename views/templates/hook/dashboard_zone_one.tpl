@@ -142,13 +142,6 @@
 			<i class="icon-globe"></i> {l s='Traffic' d='Modules.Dashactivity.Admin'} <span class="subtitle small" id="traffic-subtitle"></span>
 		</header>
 		<ul class="data_list">
-			{if $gapi_mode}
-				<li>
-					<span class="data_label">
-						<img src="../modules/dashactivity/gapi-logo.gif" width="16" height="16" alt=""/> <a href="{$link->getAdminLink('AdminModules')|escape:'html':'UTF-8'}&amp;{$gapi_mode}=gapi">{l s='Link to your Google Analytics account' d='Modules.Dashactivity.Admin'}</a>
-					</span>
-				</li>
-			{/if}
 			<li>
 				<span class="data_label"><a href="{$link->getAdminLink('AdminStats')|escape:'html':'UTF-8'}&amp;module=statsforecast">{l s='Visits' d='Modules.Dashactivity.Admin'}</a></span>
 				<span class="data_value size_md">
