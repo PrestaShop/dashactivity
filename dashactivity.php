@@ -55,6 +55,8 @@ class dashactivity extends Module
             && $this->registerHook('dashboardZoneOne')
             && $this->registerHook('dashboardData')
             && $this->registerHook('actionAdminControllerSetMedia')
+            && $this->registerHook('dashactivityOnlineVisitors')
+            && $this->registerHook('dashactivityUniqueVisitors')
         ;
     }
 
@@ -490,5 +492,25 @@ class dashactivity extends Module
         $unique_visitors = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue($sql);
 
         return $unique_visitors;
+    }
+
+    public function hookDashactivityOnlineVisitors()
+    {
+        $onlineVisitors = dashactivity::getOnlineVisitors();
+        $this->context->smarty->assign([
+            'onlineVisitors' => $onlineVisitors
+        ]);
+
+        return $this->context->smarty->fetch($this->local_path . 'views/templates/hook/onlineVisitors.tpl');
+    }
+
+    public function hookDashactivityUniqueVisitors()
+    {
+        $uniqueVisitors = dashactivity::getUniqueVisitors();
+        $this->context->smarty->assign([
+            'uniqueVisitors' => $uniqueVisitors
+        ]);
+
+        return $this->context->smarty->fetch($this->local_path . 'views/templates/hook/uniqueVisitors.tpl');
     }
 }
