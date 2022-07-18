@@ -430,4 +430,65 @@ class dashactivity extends Module
             'DASHACTIVITY_VISITOR_ONLINE' => Tools::getValue('DASHACTIVITY_VISITOR_ONLINE', Configuration::get('DASHACTIVITY_VISITOR_ONLINE')),
         ];
     }
+
+    public static function getOnlineVisitors()
+    {
+        if ($maintenance_ips = Configuration::get('PS_MAINTENANCE_IP')) {
+            $maintenance_ips = implode(',', array_map('ip2long', array_map('trim', explode(',', $maintenance_ips))));
+        }
+        if (Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS')) {
+            $sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, pt.name as page
+					FROM `' . _DB_PREFIX_ . 'connections` c
+					LEFT JOIN `' . _DB_PREFIX_ . 'connections_page` cp ON c.id_connections = cp.id_connections
+					LEFT JOIN `' . _DB_PREFIX_ . 'page` p ON p.id_page = cp.id_page
+					LEFT JOIN `' . _DB_PREFIX_ . 'page_type` pt ON p.id_page_type = pt.id_page_type
+					INNER JOIN `' . _DB_PREFIX_ . 'guest` g ON c.id_guest = g.id_guest
+					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
+						' . Shop::addSqlRestriction(false, 'c') . '
+						AND cp.`time_end` IS NULL
+					AND (\'' . pSQL(date('Y-m-d H:i:00', time() - 60 * (int) Configuration::get('DASHACTIVITY_VISITOR_ONLINE'))) . '\' < cp.`time_start`)
+					' . ($maintenance_ips ? 'AND c.ip_address NOT IN (' . preg_replace('/[^,0-9]/', '', $maintenance_ips) . ')' : '') . '
+					GROUP BY c.id_connections
+					ORDER BY c.date_add DESC';
+        } else {
+            $sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, "-" as page
+					FROM `' . _DB_PREFIX_ . 'connections` c
+					INNER JOIN `' . _DB_PREFIX_ . 'guest` g ON c.id_guest = g.id_guest
+					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
+						' . Shop::addSqlRestriction(false, 'c') . '
+						AND (\'' . pSQL(date('Y-m-d H:i:00', time() - 60 * (int) Configuration::get('DASHACTIVITY_VISITOR_ONLINE'))) . '\' < c.`date_add`)
+					' . ($maintenance_ips ? 'AND c.ip_address NOT IN (' . preg_replace('/[^,0-9]/', '', $maintenance_ips) . ')' : '') . '
+					ORDER BY c.date_add DESC';
+        }
+        Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($sql);
+        $online_visitor = Db::getInstance()->NumRows();
+
+        return $online_visitor;
+    }
+
+    public static function getUniqueVisitors($date_from = null, $date_to = null)
+    {
+        if($date_from === null) {
+            $date_from = date('Y-m-d') . ' 00:00:00';
+        }
+        if($date_to === null) {
+            $date_to = date('Y-m-d') . ' 23:59:59';
+        }
+        
+        if(!Validate::isDate($date_from)){
+            throw new PrestaShopException('date_from is not valid');
+        }
+        if(!Validate::isDate($date_to)){
+            throw new PrestaShopException('date_to is not valid');
+        }
+        
+        $sql = '
+            SELECT COUNT(DISTINCT `id_guest`) as unique_visitors
+            FROM `' . _DB_PREFIX_ . 'connections`
+            WHERE `date_add` BETWEEN "' . pSQL($date_from) . '" AND "' . pSQL($date_to) . '" ' . Shop::addSqlRestriction(false);
+
+        $unique_visitors = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue($sql);
+
+        return $unique_visitors;
+    }
 }
