@@ -37,6 +37,7 @@ class dashactivity extends Module
         $this->tab = 'administration';
         $this->version = '2.1.0';
         $this->author = 'PrestaShop';
+        $this->bootstrap = true;
 
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Activity', [], 'Modules.Dashactivity.Admin');
@@ -512,5 +513,63 @@ class dashactivity extends Module
         ]);
 
         return $this->context->smarty->fetch($this->local_path . 'views/templates/hook/uniqueVisitors.tpl');
+    }
+
+    public function renderFormOnlineAndUniqueVisitorsShortcodeHooks()
+    {
+        $fields_form = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->trans('Online And Unique Visitors Shortcode Hooks', array(), 'Modules.Dashactivity.Config'),
+                    'icon' => 'icon-cogs'
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'text',
+                        'disabled' => true,
+                        'label' => $this->trans('Online visitors', array(), 'Modules.Dashactivity.Config'),
+                        'hint' => $this->trans('Online visitors currently: %d', array(dashactivity::getOnlineVisitors()), 'Modules.Dashactivity.Config'),
+                        'desc' => $this->trans('Copy and paste in your tpl files.', array(), 'Modules.Dashactivity.Config'),
+                        'name' => 'DASHACTIVITY_HOOK_SHORTCODE_VISITORS_ONLINE'
+                    ),
+                    array(
+                        'type' => 'text',
+                        'disabled' => true,
+                        'label' => $this->trans('Unique visitors', array(), 'Modules.Dashactivity.Config'),
+                        'hint' => $this->trans('Unique visitors between (%s) and (%s) are %d', array(date('Y-m-d') . ' 00:00:00', date('Y-m-d') . ' 23:59:59', dashactivity::getUniqueVisitors()), 'Modules.Dashactivity.Config'),
+                        'desc' => $this->trans('Copy and paste in your tpl files.', array(), 'Modules.Dashactivity.Config'),
+                        'name' => 'DASHACTIVITY_HOOK_SHORTCODE_VISITORS_UNIQUE'
+                    ),
+                ),
+            ),
+        );
+
+        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+
+        $helper = new HelperForm();
+        $helper->default_form_language = $lang->id;
+        $helper->module = $this;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->tpl_vars = array(
+            'uri' => $this->getPathUri(),
+            'fields_value' => $this->getFormOnlineAndUniqueVisitorsShortcodeHooksFieldsValues(),
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id
+        );
+
+        return $helper->generateForm(array($fields_form));
+    }
+
+    public function getFormOnlineAndUniqueVisitorsShortcodeHooksFieldsValues()
+    {
+        $fields['DASHACTIVITY_HOOK_SHORTCODE_VISITORS_ONLINE'] = "{hook h='dashactivityOnlineVisitors' mod='dashactivity'}";
+        $fields['DASHACTIVITY_HOOK_SHORTCODE_VISITORS_UNIQUE'] = "{hook h='dashactivityUniqueVisitors' mod='dashactivity'}";
+        
+        return $fields;
+    }
+
+    public function getContent()
+    {
+        return $this->renderFormOnlineAndUniqueVisitorsShortcodeHooks();
     }
 }
