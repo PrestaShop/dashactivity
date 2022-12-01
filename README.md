@@ -2,7 +2,7 @@
 
 ## About
 
-Displays an activity widget in the Back office dashboard.
+Check in one glance what is happening on your store with a list of KPI on your dashboard.
 
 ## Reporting issues
 
