@@ -149,12 +149,6 @@
 				</span>
 			</li>
 			<li>
-				<span class="data_label"><a href="{$link->getAdminLink('AdminStats')|escape:'html':'UTF-8'}&amp;module=statsvisits">{l s='Unique Visitors' d='Modules.Dashactivity.Admin'}</a></span>
-				<span class="data_value size_md">
-					<span id="unique_visitors"></span>
-				</span>
-			</li>
-			<li>
 				<span class="data_label">{l s='Traffic Sources' d='Modules.Dashactivity.Admin'}</span>
 				<ul class="data_list_small" id="dash_traffic_source">
 				</ul>
