@@ -40,6 +40,7 @@
 	</section>
 	<section id="dash_live" class="loading">
 		<ul class="data_list_large">
+			{if $statslive_enabled}
 			<li>
 				<span class="data_label size_l">
 					<a href="{$link->getAdminLink('AdminStats')|escape:'html':'UTF-8'}&amp;module=statslive">{l s='Online Visitors' d='Modules.Dashactivity.Admin'}</a>
@@ -51,6 +52,7 @@
 					<span id="online_visitor"></span>
 				</span>
 			</li>
+			{/if}
 			<li>
 				<span class="data_label size_l">
 					<a href="{$link->getAdminLink('AdminCarts')|escape:'html':'UTF-8'}">{l s='Active Shopping Carts' d='Modules.Dashactivity.Admin'}</a>
