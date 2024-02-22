@@ -80,7 +80,6 @@ class dashactivity extends Module
                 'date_subtitle' => $this->trans('(from %s to %s)', [], 'Modules.Dashactivity.Admin'),
                 'date_format' => $this->context->language->date_format_lite,
                 'link' => $this->context->link,
-        'statslive_enabled' => Module::isEnabled('statslive'),
             ]
         );
 
