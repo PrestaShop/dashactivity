@@ -430,4 +430,24 @@ class dashactivity extends Module
             'DASHACTIVITY_VISITOR_ONLINE' => Tools::getValue('DASHACTIVITY_VISITOR_ONLINE', Configuration::get('DASHACTIVITY_VISITOR_ONLINE')),
         ];
     }
+
+    /**
+     * Save dashboard configuration
+     *
+     * @param array $config
+     *
+     * @return bool determines if there are errors or not
+     */
+    public function saveDashConfig(array $config)
+    {
+        if (!$this->getPermission('configure')) {
+            return true;
+        }
+
+        foreach (array_keys($this->getConfigFieldsValues()) as $fieldName) {
+            Configuration::updateValue($fieldName, (int) $config[$fieldName]);
+        }
+
+        return false;
+    }
 }
