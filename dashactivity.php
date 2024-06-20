@@ -440,10 +440,6 @@ class dashactivity extends Module
      */
     public function saveDashConfig(array $config)
     {
-        if (!$this->getPermission('configure')) {
-            return true;
-        }
-
         foreach (array_keys($this->getConfigFieldsValues()) as $fieldName) {
             Configuration::updateValue($fieldName, (int) $config[$fieldName]);
         }
