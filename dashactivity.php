@@ -159,7 +159,9 @@ class dashactivity extends Module
                             explode(',', $maintenance_ips)
                         )
                     ),
-                    static fn ($item) => (string) $item !== ''
+                    static function ($item) {
+                        return ((string) $item) !== '';
+                    }
                 )
             );
         }
