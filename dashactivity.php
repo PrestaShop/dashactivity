@@ -41,7 +41,7 @@ class dashactivity extends Module
         parent::__construct();
         $this->displayName = $this->trans('Dashboard Activity', [], 'Modules.Dashactivity.Admin');
         $this->description = $this->trans('Check in one glance what is happening on your store with a list of KPI on your dashboard.', [], 'Modules.Dashactivity.Admin');
-        $this->ps_versions_compliancy = ['min' => '1.7.7.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '8.2.0', 'max' => _PS_VERSION_];
     }
 
     public function install()
@@ -62,12 +62,6 @@ class dashactivity extends Module
     {
         if (get_class($this->context->controller) == 'AdminDashboardController') {
             $this->context->controller->addJs($this->_path . 'views/js/' . $this->name . '.js');
-            $this->context->controller->addJs(
-                [
-                    _PS_JS_DIR_ . 'date.js',
-                    _PS_JS_DIR_ . 'tools.js',
-                ] // retro compat themes 1.5
-            );
         }
     }
 

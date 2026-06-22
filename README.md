@@ -6,7 +6,7 @@ Check in one glance what is happening on your store with a list of KPI on your d
 
 ## Compatibility
 
-PrestaShop: `1.7.7.0` or later
+PrestaShop: `8.2.0` or later
 
 ## How to test
 Link to specs: https://docs.prestashop-project.org/functional-documentation/functional-documentation/ux-ui/back-office/improve/modules/product-comments-productcomments
@@ -37,5 +37,5 @@ This module is released under the [Academic Free License 3.0][AFL-3.0]
 
 [report-issue]: https://github.com/PrestaShop/PrestaShop/issues/new/choose
 [prestashop]: https://www.prestashop-project.org/
-[contribution-guidelines]: https://devdocs.prestashop.com/1.7/contribute/contribution-guidelines/project-modules/
+[contribution-guidelines]: https://devdocs.prestashop.com/8/contribute/contribution-guidelines/project-modules/
 [AFL-3.0]: https://opensource.org/licenses/AFL-3.0
