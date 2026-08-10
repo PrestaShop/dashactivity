@@ -258,7 +258,7 @@ class dashactivity extends Module
 				' . Shop::addSqlAssociation('product', 'p') . '
 				WHERE pc.deleted = 0
 				AND pc.`date_add` BETWEEN "' . pSQL($params['date_from']) . '" AND "' . pSQL($params['date_to']) . '"
-				' . Shop::addSqlRestriction(Shop::SHARE_ORDER)
+				' . Shop::addSqlRestriction(Shop::SHARE_ORDER, 'product_shop')
             );
         }
 
