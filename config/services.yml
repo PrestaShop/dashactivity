@@ -1,0 +1,8 @@
+services:
+  PrestaShop\Module\DashActivity\Controller\ConfigurationController:
+    public: true
+    autowire: true
+    autoconfigure: true
+
+  PrestaShop\Module\DashActivity\Type\ConfigurationType:
+    tags: ['form.type']

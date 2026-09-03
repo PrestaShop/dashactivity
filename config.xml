@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-	<name>dashactivity</name>
-	<displayName><![CDATA[Dashboard Activity]]></displayName>
-	<version><![CDATA[2.1.2]]></version>
-	<description><![CDATA[]]></description>
-	<author><![CDATA[PrestaShop]]></author>
-	<tab><![CDATA[dashboard]]></tab>
-	<is_configurable>0</is_configurable>
-	<need_instance>1</need_instance>
-	<limited_countries></limited_countries>
+    <name>dashactivity</name>
+    <displayName><![CDATA[Dashboard Activity]]></displayName>
+    <version><![CDATA[2.2.0]]></version>
+    <description><![CDATA[Check at a glance what is happening on your store with a list of KPIs on your dashboard.]]></description>
+    <author><![CDATA[PrestaShop]]></author>
+    <tab><![CDATA[administration]]></tab>
+    <is_configurable>0</is_configurable>
+    <need_instance>1</need_instance>
 </module>

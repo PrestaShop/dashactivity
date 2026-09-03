@@ -23,6 +23,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use Twig\Environment;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -35,7 +38,7 @@ class dashactivity extends Module
     {
         $this->name = 'dashactivity';
         $this->tab = 'administration';
-        $this->version = '2.1.2';
+        $this->version = '2.2.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -51,11 +54,42 @@ class dashactivity extends Module
         Configuration::updateValue('DASHACTIVITY_CART_ABANDONED_MAX', 48);
         Configuration::updateValue('DASHACTIVITY_VISITOR_ONLINE', 30);
 
-        return parent::install()
+        // Hidden tab (id_parent -1): only used to back the settings route's ACL.
+        $tab = new Tab();
+        $tab->active = true;
+        $tab->class_name = 'AdminDashactivityConfiguration';
+        $tab->name = [];
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Dashactivity configuration';
+        }
+        $tab->id_parent = -1;
+        $tab->module = $this->name;
+
+        return $tab->add()
+            && parent::install()
             && $this->registerHook('dashboardZoneOne')
             && $this->registerHook('dashboardData')
             && $this->registerHook('actionAdminControllerSetMedia')
+            // Modern counterpart of dashboardZoneOne, registered alongside it (#41971).
+            && $this->registerHook('displayAdminDashboardZoneOne')
         ;
+    }
+
+    public function uninstall()
+    {
+        $idTab = (int) Tab::getIdFromClassName('AdminDashactivityConfiguration');
+        if ($idTab) {
+            (new Tab($idTab))->delete();
+        }
+
+        return parent::uninstall();
+    }
+
+    public function getContent()
+    {
+        Tools::redirectAdmin(
+            SymfonyContainer::getInstance()->get('router')->generate('dashactivity_configuration')
+        );
     }
 
     public function hookActionAdminControllerSetMedia()
@@ -78,6 +112,102 @@ class dashactivity extends Module
         );
 
         return $this->display(__FILE__, 'dashboard_zone_one.tpl');
+    }
+
+    /**
+     * Modern counterpart of hookDashboardZoneOne(). Reuses hookDashboardData() as-is.
+     */
+    public function hookDisplayAdminDashboardZoneOne(array $params)
+    {
+        $data = $this->hookDashboardData($params);
+
+        return $this->render('zone_one.html.twig', [
+            'kpiTitle' => $this->trans('Activity overview', [], 'Modules.Dashactivity.Admin'),
+            'kpiItems' => $this->getKpiList($data['data_value']),
+            'configUrl' => $this->getConfigUrl(),
+            'chartTitle' => $this->trans('Traffic sources', [], 'Admin.Orderscustomers.Notification'),
+            'chartId' => 'dashactivity-traffic-sources',
+            'chartConfig' => json_encode(
+                $this->getTrafficSourcesChartConfig($data['data_chart']['dash_trends_chart1']),
+                JSON_HEX_TAG | JSON_HEX_AMP
+            ),
+        ]);
+    }
+
+    private function render(string $template, array $params = []): string
+    {
+        return $this->get('twig')->render('@Modules/dashactivity/views/templates/admin/' . $template, $params);
+    }
+
+    /**
+     * Null (no "Configure" link shown) when the current employee can't configure this module.
+     */
+    private function getConfigUrl(): ?string
+    {
+        if (!$this->getPermission('configure')) {
+            return null;
+        }
+
+        return SymfonyContainer::getInstance()->get('router')->generate('dashactivity_configuration', [
+            'token' => Tools::getAdminTokenLite('AdminDashactivityConfiguration'),
+        ]);
+    }
+
+    /**
+     * Plain label/value pairs — no JS contract needed, this is server-rendered HTML.
+     */
+    private function getKpiList(array $dataValue): array
+    {
+        $labels = [
+            'pending_orders' => $this->trans('Orders', [], 'Admin.Global'),
+            'return_exchanges' => $this->trans('Return/Exchanges', [], 'Modules.Dashactivity.Admin'),
+            'abandoned_cart' => $this->trans('Abandoned Carts', [], 'Admin.Global'),
+            'products_out_of_stock' => $this->trans('Out of Stock Products', [], 'Modules.Dashactivity.Admin'),
+            'new_messages' => $this->trans('New Messages', [], 'Modules.Dashactivity.Admin'),
+            'product_reviews' => $this->trans('Product Reviews', [], 'Modules.Dashactivity.Admin'),
+            'new_customers' => $this->trans('New Customers', [], 'Modules.Dashactivity.Admin'),
+            'online_visitor' => $this->trans('Online Visitors', [], 'Modules.Dashactivity.Admin'),
+            'active_shopping_cart' => $this->trans('Active Shopping Carts', [], 'Modules.Dashactivity.Admin'),
+            'new_registrations' => $this->trans('New Subscriptions', [], 'Modules.Dashactivity.Admin'),
+            'total_suscribers' => $this->trans('Total Subscribers', [], 'Modules.Dashactivity.Admin'),
+            'visits' => $this->trans('Visits', [], 'Modules.Dashactivity.Admin'),
+            'unique_visitors' => $this->trans('Unique Visitors', [], 'Modules.Dashactivity.Admin'),
+        ];
+
+        $kpis = [];
+        foreach ($labels as $key => $label) {
+            if (array_key_exists($key, $dataValue)) {
+                $kpis[] = ['label' => $label, 'value' => $dataValue[$key]];
+            }
+        }
+
+        return $kpis;
+    }
+
+    /**
+     * Plain Chart.js config, no dataset color (auto-applied by the core psColors plugin).
+     */
+    private function getTrafficSourcesChartConfig(array $nvd3Chart): array
+    {
+        $labels = [];
+        $values = [];
+        foreach ($nvd3Chart['data'] as $point) {
+            $labels[] = $point['key'];
+            $values[] = $point['y'];
+        }
+
+        return [
+            'type' => 'doughnut',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    ['data' => $values],
+                ],
+            ],
+            'options' => [
+                'plugins' => ['legend' => ['position' => 'bottom']],
+            ],
+        ];
     }
 
     public function hookDashboardData($params)

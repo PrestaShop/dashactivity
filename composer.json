@@ -15,6 +15,11 @@
   "require-dev": {
     "prestashop/php-dev-tools": "^3.4"
   },
+  "autoload": {
+    "psr-4": {
+      "PrestaShop\\Module\\DashActivity\\": "src/"
+    }
+  },
   "config": {
     "preferred-install": "dist",
     "classmap-authoritative": true,
