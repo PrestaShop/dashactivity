@@ -159,32 +159,32 @@ class dashactivity extends Module
                 )
             );
         }
+        // WHY: only the NUMBER of visitors is used, so the counting belongs in SQL. Selecting the
+        // rows and calling NumRows() carried every online visitor into PHP and made the database
+        // sort them for an order nothing reads. The two `page` joins existed only to produce the
+        // page name this hook discards, and both join on a primary key, so removing them cannot
+        // change the count; `connections_page` is the one table that can match a connection more
+        // than once, which is exactly what the GROUP BY collapsed and COUNT(DISTINCT) still does.
         if (Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS')) {
-            $sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, pt.name as page
+            $sql = 'SELECT COUNT(DISTINCT c.id_connections)
 					FROM `' . _DB_PREFIX_ . 'connections` c
 					LEFT JOIN `' . _DB_PREFIX_ . 'connections_page` cp ON c.id_connections = cp.id_connections
-					LEFT JOIN `' . _DB_PREFIX_ . 'page` p ON p.id_page = cp.id_page
-					LEFT JOIN `' . _DB_PREFIX_ . 'page_type` pt ON p.id_page_type = pt.id_page_type
 					INNER JOIN `' . _DB_PREFIX_ . 'guest` g ON c.id_guest = g.id_guest
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						' . Shop::addSqlRestriction(false, 'c') . '
 						AND cp.`time_end` IS NULL
 					AND (\'' . pSQL(date('Y-m-d H:i:00', time() - 60 * (int) Configuration::get('DASHACTIVITY_VISITOR_ONLINE'))) . '\' < cp.`time_start`)
-					' . ($maintenance_ips ? 'AND c.ip_address NOT IN (' . preg_replace('/[^,0-9]/', '', $maintenance_ips) . ')' : '') . '
-					GROUP BY c.id_connections
-					ORDER BY c.date_add DESC';
+					' . ($maintenance_ips ? 'AND c.ip_address NOT IN (' . preg_replace('/[^,0-9]/', '', $maintenance_ips) . ')' : '') . '';
         } else {
-            $sql = 'SELECT c.id_guest, c.ip_address, c.date_add, c.http_referer, "-" as page
+            $sql = 'SELECT COUNT(*)
 					FROM `' . _DB_PREFIX_ . 'connections` c
 					INNER JOIN `' . _DB_PREFIX_ . 'guest` g ON c.id_guest = g.id_guest
 					WHERE (g.id_customer IS NULL OR g.id_customer = 0)
 						' . Shop::addSqlRestriction(false, 'c') . '
 						AND (\'' . pSQL(date('Y-m-d H:i:00', time() - 60 * (int) Configuration::get('DASHACTIVITY_VISITOR_ONLINE'))) . '\' < c.`date_add`)
-					' . ($maintenance_ips ? 'AND c.ip_address NOT IN (' . preg_replace('/[^,0-9]/', '', $maintenance_ips) . ')' : '') . '
-					ORDER BY c.date_add DESC';
+					' . ($maintenance_ips ? 'AND c.ip_address NOT IN (' . preg_replace('/[^,0-9]/', '', $maintenance_ips) . ')' : '') . '';
         }
-        Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($sql);
-        $online_visitor = Db::getInstance()->NumRows();
+        $online_visitor = (int) Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue($sql);
 
         $pending_orders = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue('
 			SELECT COUNT(*)
