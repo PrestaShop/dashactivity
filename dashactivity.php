@@ -162,9 +162,7 @@ class dashactivity extends Module
             return null;
         }
 
-        return SymfonyContainer::getInstance()->get('router')->generate('dashactivity_configuration', [
-            'token' => Tools::getAdminTokenLite('AdminDashactivityConfiguration'),
-        ]);
+        return SymfonyContainer::getInstance()->get('router')->generate('dashactivity_configuration');
     }
 
     /**
