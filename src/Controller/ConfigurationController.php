@@ -22,7 +22,7 @@ use PrestaShop\Module\DashActivity\Type\ConfigurationType;
 // FrameworkBundleAdminController is deprecated since 9.0 in favor of PrestaShopAdminController,
 // which doesn't exist on PS 8.2 — kept for the module's declared 8.2+ compatibility.
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
-use PrestaShopBundle\Security\Attribute\AdminSecurity;
+use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,7 +35,9 @@ class ConfigurationController extends FrameworkBundleAdminController
         'DASHACTIVITY_CART_ABANDONED_MAX',
     ];
 
-    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))")]
+    /**
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
+     */
     public function indexAction(Request $request): Response
     {
         $data = [];
