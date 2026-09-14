@@ -54,19 +54,8 @@ class dashactivity extends Module
         Configuration::updateValue('DASHACTIVITY_CART_ABANDONED_MAX', 48);
         Configuration::updateValue('DASHACTIVITY_VISITOR_ONLINE', 30);
 
-        // Hidden tab (id_parent -1): only used to back the settings route's ACL.
-        $tab = new Tab();
-        $tab->active = true;
-        $tab->class_name = 'AdminDashactivityConfiguration';
-        $tab->name = [];
-        foreach (Language::getLanguages(true) as $lang) {
-            $tab->name[$lang['id_lang']] = 'Dashactivity configuration';
-        }
-        $tab->id_parent = -1;
-        $tab->module = $this->name;
-
-        return $tab->add()
-            && parent::install()
+        return parent::install()
+            && $this->createConfigurationTab()
             && $this->registerHook('dashboardZoneOne')
             && $this->registerHook('dashboardData')
             && $this->registerHook('actionAdminControllerSetMedia')
@@ -83,6 +72,29 @@ class dashactivity extends Module
         }
 
         return parent::uninstall();
+    }
+
+    /**
+     * Hidden tab (id_parent -1): only used to back the settings route's ACL. Shared between
+     * install() and the 2.2.0 upgrade script so shops upgrading from an earlier version get it too.
+     */
+    public function createConfigurationTab(): bool
+    {
+        if (Tab::getIdFromClassName('AdminDashactivityConfiguration')) {
+            return true;
+        }
+
+        $tab = new Tab();
+        $tab->active = true;
+        $tab->class_name = 'AdminDashactivityConfiguration';
+        $tab->name = [];
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Dashactivity configuration';
+        }
+        $tab->id_parent = -1;
+        $tab->module = $this->name;
+
+        return $tab->add();
     }
 
     public function getContent()
@@ -125,12 +137,9 @@ class dashactivity extends Module
             'kpiTitle' => $this->trans('Activity overview', [], 'Modules.Dashactivity.Admin'),
             'kpiItems' => $this->getKpiList($data['data_value']),
             'configUrl' => $this->getConfigUrl(),
-            'chartTitle' => $this->trans('Traffic sources', [], 'Admin.Orderscustomers.Notification'),
+            'chartTitle' => $this->trans('Traffic sources', [], 'Modules.Dashactivity.Admin'),
             'chartId' => 'dashactivity-traffic-sources',
-            'chartConfig' => json_encode(
-                $this->getTrafficSourcesChartConfig($data['data_chart']['dash_trends_chart1']),
-                JSON_HEX_TAG | JSON_HEX_AMP
-            ),
+            'chartConfig' => $this->getTrafficSourcesChartConfig($data['data_chart']['dash_trends_chart1'] ?? []),
         ]);
     }
 
@@ -196,7 +205,7 @@ class dashactivity extends Module
     {
         $labels = [];
         $values = [];
-        foreach ($nvd3Chart['data'] as $point) {
+        foreach ($nvd3Chart['data'] ?? [] as $point) {
             $labels[] = $point['key'];
             $values[] = $point['y'];
         }

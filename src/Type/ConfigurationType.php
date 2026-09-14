@@ -24,14 +24,23 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Plain AbstractType: labels/help are translated via translation_domain, no need for
- * TranslatorAwareType's translator/locales injection.
+ * Plain AbstractType (no need for TranslatorAwareType's locales), with TranslatorInterface
+ * constructor-injected directly so label/help strings go through an explicit trans() call —
+ * required for the translation extractor to pick them up, since it only extracts ChoiceType
+ * "choices", not "label"/"help" option strings.
  */
 class ConfigurationType extends AbstractType
 {
     private const DELAY_CHOICES = [15, 30, 45, 60, 90, 120];
+
+    private const DOMAIN = 'Modules.Dashactivity.Admin';
+
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -39,23 +48,23 @@ class ConfigurationType extends AbstractType
 
         $builder
             ->add('DASHACTIVITY_CART_ACTIVE', ChoiceType::class, [
-                'label' => 'Active cart',
-                'help' => 'How long (in minutes) a cart is to be considered as active after the last recorded change.',
+                'label' => $this->translator->trans('Active cart', [], self::DOMAIN),
+                'help' => $this->translator->trans('How long (in minutes) a cart is to be considered as active after the last recorded change.', [], self::DOMAIN),
                 'choices' => $delayChoices,
             ])
             ->add('DASHACTIVITY_VISITOR_ONLINE', ChoiceType::class, [
-                'label' => 'Online visitor',
-                'help' => 'How long (in minutes) a visitor is to be considered as online after their last action.',
+                'label' => $this->translator->trans('Online visitor', [], self::DOMAIN),
+                'help' => $this->translator->trans('How long (in minutes) a visitor is to be considered as online after their last action.', [], self::DOMAIN),
                 'choices' => $delayChoices,
             ])
             ->add('DASHACTIVITY_CART_ABANDONED_MIN', IntegerType::class, [
-                'label' => 'Abandoned cart (min)',
-                'help' => 'How long (in hours) after the last action a cart is to be considered as abandoned.',
+                'label' => $this->translator->trans('Abandoned cart (min)', [], self::DOMAIN),
+                'help' => $this->translator->trans('How long (in hours) after the last action a cart is to be considered as abandoned.', [], self::DOMAIN),
                 'constraints' => [new NotBlank(), new GreaterThan(0)],
             ])
             ->add('DASHACTIVITY_CART_ABANDONED_MAX', IntegerType::class, [
-                'label' => 'Abandoned cart (max)',
-                'help' => 'How long (in hours) after the last action a cart is no longer to be considered as abandoned.',
+                'label' => $this->translator->trans('Abandoned cart (max)', [], self::DOMAIN),
+                'help' => $this->translator->trans('How long (in hours) after the last action a cart is no longer to be considered as abandoned.', [], self::DOMAIN),
                 'constraints' => [new NotBlank(), new GreaterThan(0)],
             ])
         ;

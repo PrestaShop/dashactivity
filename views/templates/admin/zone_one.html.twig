@@ -3,6 +3,7 @@
  # docs/licenses/LICENSE.txt file that was distributed with this source code.
  #}
 {% import '@PrestaShop/Admin/Dashboard/_partials/card_header.html.twig' as dashboard %}
+{% import '@PrestaShop/Admin/Dashboard/_partials/chart.html.twig' as chart %}
 
 <div class="card mb-3">
   {{ dashboard.renderCardHeader(kpiTitle, 'insights', configUrl) }}
@@ -23,7 +24,6 @@
     <h3 class="card-header-title"><i class="material-icons">donut_small</i> {{ chartTitle }}</h3>
   </div>
   <div class="card-body">
-    <canvas id="{{ chartId }}" data-chart height="180" role="img" aria-label="{{ chartTitle }}"></canvas>
-    <script type="application/json" id="{{ chartId }}-data">{{ chartConfig|raw }}</script>
+    {{ chart.renderChart(chartId, chartConfig, {height: 280}) }}
   </div>
 </div>
