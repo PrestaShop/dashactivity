@@ -1,0 +1,7 @@
+dashactivity_configuration:
+  path: /dashactivity/configuration
+  methods: [GET, POST]
+  defaults:
+    _controller: PrestaShop\Module\DashActivity\Controller\ConfigurationController::indexAction
+    _legacy_controller: AdminDashactivityConfiguration
+    _legacy_link: AdminDashactivityConfiguration
