@@ -38,7 +38,7 @@ class dashactivity extends Module
     {
         $this->name = 'dashactivity';
         $this->tab = 'administration';
-        $this->version = '2.2.0';
+        $this->version = '3.0.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();

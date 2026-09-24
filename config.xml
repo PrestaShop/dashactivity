@@ -2,7 +2,7 @@
 <module>
 	<name>dashactivity</name>
 	<displayName><![CDATA[Dashboard Activity]]></displayName>
-	<version><![CDATA[2.2.0]]></version>
+	<version><![CDATA[3.0.0]]></version>
 	<description><![CDATA[Check at a glance what is happening on your store with a list of KPIs on your dashboard.]]></description>
 	<author><![CDATA[PrestaShop]]></author>
 	<tab><![CDATA[administration]]></tab>
