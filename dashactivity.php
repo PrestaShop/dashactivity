@@ -50,8 +50,9 @@ class dashactivity extends Module
     public function install()
     {
         Configuration::updateValue('DASHACTIVITY_CART_ACTIVE', 30);
-        Configuration::updateValue('DASHACTIVITY_CART_ABANDONED_MIN', 24);
-        Configuration::updateValue('DASHACTIVITY_CART_ABANDONED_MAX', 48);
+        // In minutes (see hookDashboardData()'s strtotime('- X MIN')), not hours: 1440/2880 is 24h/48h.
+        Configuration::updateValue('DASHACTIVITY_CART_ABANDONED_MIN', 1440);
+        Configuration::updateValue('DASHACTIVITY_CART_ABANDONED_MAX', 2880);
         Configuration::updateValue('DASHACTIVITY_VISITOR_ONLINE', 30);
 
         return parent::install()
@@ -76,7 +77,7 @@ class dashactivity extends Module
 
     /**
      * Hidden tab (id_parent -1): only used to back the settings route's ACL. Shared between
-     * install() and the 2.2.0 upgrade script so shops upgrading from an earlier version get it too.
+     * install() and the 3.0.0 upgrade script so shops upgrading from an earlier version get it too.
      */
     public function createConfigurationTab(): bool
     {
@@ -540,17 +541,17 @@ class dashactivity extends Module
         ];
         $fields_form['form']['input'][] = [
             'label' => $this->trans('Abandoned cart (min)', [], 'Modules.Dashactivity.Admin'),
-            'hint' => $this->trans('How long (in hours) after the last action a cart is to be considered as abandoned (default: 24 hrs).', [], 'Modules.Dashactivity.Admin'),
+            'hint' => $this->trans('How long (in minutes) after the last action a cart is to be considered as abandoned (default: 1440 min, 24h).', [], 'Modules.Dashactivity.Admin'),
             'name' => 'DASHACTIVITY_CART_ABANDONED_MIN',
             'type' => 'text',
-            'suffix' => $this->trans('hrs', [], 'Modules.Dashactivity.Admin'),
+            'suffix' => $this->trans('min', [], 'Modules.Dashactivity.Admin'),
         ];
         $fields_form['form']['input'][] = [
             'label' => $this->trans('Abandoned cart (max)', [], 'Modules.Dashactivity.Admin'),
-            'hint' => $this->trans('How long (in hours) after the last action a cart is no longer to be considered as abandoned (default: 24 hrs).', [], 'Modules.Dashactivity.Admin'),
+            'hint' => $this->trans('How long (in minutes) after the last action a cart is no longer to be considered as abandoned (default: 2880 min, 48h).', [], 'Modules.Dashactivity.Admin'),
             'name' => 'DASHACTIVITY_CART_ABANDONED_MAX',
             'type' => 'text',
-            'suffix' => $this->trans('hrs', [], 'Modules.Dashactivity.Admin'),
+            'suffix' => $this->trans('min', [], 'Modules.Dashactivity.Admin'),
         ];
 
         $helper = new HelperForm();

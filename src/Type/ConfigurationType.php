@@ -19,11 +19,8 @@ namespace PrestaShop\Module\DashActivity\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -35,6 +32,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ConfigurationType extends AbstractType
 {
     private const DELAY_CHOICES = [15, 30, 45, 60, 90, 120];
+
+    // DASHACTIVITY_CART_ABANDONED_MIN/MAX are consumed as minutes (strtotime('- X MIN') in
+    // dashactivity.php), not hours as the field used to suggest — 30 min to 3 days covers the
+    // range a store would realistically want for a cart abandonment window.
+    private const ABANDONED_CART_CHOICES = [30, 60, 120, 240, 360, 720, 1440, 2880, 4320];
 
     private const DOMAIN = 'Modules.Dashactivity.Admin';
 
@@ -49,6 +51,7 @@ class ConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $delayChoices = array_combine(self::DELAY_CHOICES, self::DELAY_CHOICES);
+        $abandonedCartChoices = array_combine(self::ABANDONED_CART_CHOICES, self::ABANDONED_CART_CHOICES);
 
         $builder
             ->add('DASHACTIVITY_CART_ACTIVE', ChoiceType::class, [
@@ -61,15 +64,15 @@ class ConfigurationType extends AbstractType
                 'help' => $this->translator->trans('How long (in minutes) a visitor is to be considered as online after their last action (default: 30 min).', [], self::DOMAIN),
                 'choices' => $delayChoices,
             ])
-            ->add('DASHACTIVITY_CART_ABANDONED_MIN', IntegerType::class, [
+            ->add('DASHACTIVITY_CART_ABANDONED_MIN', ChoiceType::class, [
                 'label' => $this->translator->trans('Abandoned cart (min)', [], self::DOMAIN),
-                'help' => $this->translator->trans('How long (in hours) after the last action a cart is to be considered as abandoned (default: 24 hrs).', [], self::DOMAIN),
-                'constraints' => [new NotBlank(), new GreaterThan(0)],
+                'help' => $this->translator->trans('How long (in minutes) after the last action a cart is to be considered as abandoned (default: 1440 min, 24h).', [], self::DOMAIN),
+                'choices' => $abandonedCartChoices,
             ])
-            ->add('DASHACTIVITY_CART_ABANDONED_MAX', IntegerType::class, [
+            ->add('DASHACTIVITY_CART_ABANDONED_MAX', ChoiceType::class, [
                 'label' => $this->translator->trans('Abandoned cart (max)', [], self::DOMAIN),
-                'help' => $this->translator->trans('How long (in hours) after the last action a cart is no longer to be considered as abandoned (default: 24 hrs).', [], self::DOMAIN),
-                'constraints' => [new NotBlank(), new GreaterThan(0)],
+                'help' => $this->translator->trans('How long (in minutes) after the last action a cart is no longer to be considered as abandoned (default: 2880 min, 48h).', [], self::DOMAIN),
+                'choices' => $abandonedCartChoices,
             ])
         ;
     }
