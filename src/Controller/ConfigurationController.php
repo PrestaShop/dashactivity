@@ -35,6 +35,12 @@ class ConfigurationController extends FrameworkBundleAdminController
         'DASHACTIVITY_CART_ABANDONED_MAX',
     ];
 
+    // Every install() before 3.0.0 set these two exact values, meant as hours (the free-text
+    // field's own former label) though always read back as minutes — never anything else, since
+    // no UI let a merchant change them before this settings page existed.
+    private const LEGACY_ABANDONED_CART_MIN_DEFAULT = 24;
+    private const LEGACY_ABANDONED_CART_MAX_DEFAULT = 48;
+
     /**
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      */
@@ -43,6 +49,15 @@ class ConfigurationController extends FrameworkBundleAdminController
         $data = [];
         foreach (self::FIELDS as $field) {
             $data[$field] = (int) Configuration::get($field);
+        }
+
+        // Correct the known pre-3.0.0 default to what it always meant (1440 min = 24h, 2880 min
+        // = 48h) for display only: nothing is written back unless the merchant saves the form.
+        if (self::LEGACY_ABANDONED_CART_MIN_DEFAULT === $data['DASHACTIVITY_CART_ABANDONED_MIN']) {
+            $data['DASHACTIVITY_CART_ABANDONED_MIN'] = 1440;
+        }
+        if (self::LEGACY_ABANDONED_CART_MAX_DEFAULT === $data['DASHACTIVITY_CART_ABANDONED_MAX']) {
+            $data['DASHACTIVITY_CART_ABANDONED_MAX'] = 2880;
         }
 
         $form = $this->createForm(ConfigurationType::class, $data);

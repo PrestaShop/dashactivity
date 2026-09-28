@@ -50,8 +50,14 @@ class ConfigurationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $delayChoices = array_combine(self::DELAY_CHOICES, self::DELAY_CHOICES);
-        $abandonedCartChoices = array_combine(self::ABANDONED_CART_CHOICES, self::ABANDONED_CART_CHOICES);
+        $delayChoices = [];
+        foreach (self::DELAY_CHOICES as $minutes) {
+            $delayChoices[self::formatMinutesChoiceLabel($minutes)] = $minutes;
+        }
+        $abandonedCartChoices = [];
+        foreach (self::ABANDONED_CART_CHOICES as $minutes) {
+            $abandonedCartChoices[self::formatMinutesChoiceLabel($minutes)] = $minutes;
+        }
 
         $builder
             ->add('DASHACTIVITY_CART_ACTIVE', ChoiceType::class, [
@@ -83,5 +89,15 @@ class ConfigurationType extends AbstractType
             'required' => true,
             'translation_domain' => 'Modules.Dashactivity.Admin',
         ]);
+    }
+
+    // e.g. 1440 -> "24h", 30 -> "30 min".
+    private static function formatMinutesChoiceLabel(int $minutes): string
+    {
+        if ($minutes >= 60 && 0 === $minutes % 60) {
+            return sprintf('%dh', intdiv($minutes, 60));
+        }
+
+        return sprintf('%d min', $minutes);
     }
 }
